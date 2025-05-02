@@ -58,7 +58,7 @@
         .domain(d3.extent(pops))
         .range(d3.schemeOrRd[7]);
 
-      // compute buckets with [start,end]
+      // build buckets [start,end,color]
       const thresholds = color.thresholds(),
             domain     = d3.extent(pops),
             buckets    = color.range().map((c,i) => {
@@ -107,7 +107,7 @@
             d3.select('#tooltip').style('display','none')
           );
 
-      // 7. Vertical legend in bottom-left corner
+      // 7. Vertical legend in bottom-left corner with title
       const boxW     = 40,
             boxH     = 12,
             vGap     = 6,
@@ -120,6 +120,15 @@
         .attr('class','legend')
         .attr('transform', `translate(${legendX},${legendY})`);
 
+      // title
+      legend.append('text')
+        .attr('x', 0)
+        .attr('y', - (boxH + vGap))
+        .text('Legend: Population Count')
+        .attr('font-weight','bold')
+        .attr('font-size','12px');
+
+      // colored boxes
       legend.selectAll('rect')
         .data(buckets)
         .join('rect')
@@ -131,9 +140,11 @@
           .attr('stroke','#333')
           .attr('stroke-width',0.3);
 
-      legend.selectAll('text')
+      // labels
+      legend.selectAll('text.bucket')
         .data(buckets)
         .join('text')
+          .attr('class','bucket')
           .attr('x', boxW + 6)
           .attr('y', (_,i) => i * (boxH + vGap) + boxH - 2)
           .text(d => `${d3.format(',')(Math.round(d.start))} – ${d3.format(',')(Math.round(d.end))}`);
